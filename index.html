@@ -1,0 +1,483 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fragebogen Erlenweg 7 / 9</title>
+<style>
+:root{
+  --bg:#f4f6f5; --card:#ffffff; --ink:#1d2b27; --muted:#5d6e69; --line:#d9e1de;
+  --accent:#2f7d5b; --accent-soft:#e6f2ec; --hint:#f3f7fb; --hint-line:#c9d9ea; --err:#b3261e;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Arial,Helvetica,sans-serif}
+.wrap{max-width:760px;margin:0 auto;padding:24px 16px 64px}
+header h1{font-size:1.6rem;margin:0 0 4px}
+header p{margin:0 0 4px;color:var(--muted)}
+.intro{background:var(--accent-soft);border-left:4px solid var(--accent);padding:12px 16px;border-radius:6px;margin:18px 0}
+.progress{position:sticky;top:0;z-index:5;background:var(--bg);padding:10px 0}
+.bar{height:8px;background:var(--line);border-radius:4px;overflow:hidden}
+.bar span{display:block;height:100%;width:0;background:var(--accent);transition:width .3s}
+.ptext{font-size:.85rem;color:var(--muted);margin-top:4px}
+section{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px 18px 8px;margin:16px 0}
+section h2{font-size:1.15rem;margin:0 0 12px;display:flex;gap:10px;align-items:center}
+section h2 .n{background:var(--accent);color:#fff;border-radius:50%;width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;font-size:.9rem;flex:none}
+.q{margin:0 0 18px}
+.q > label.t, .q > .t{display:block;font-weight:bold;margin-bottom:6px}
+.req{color:var(--err)}
+.opts{display:flex;flex-wrap:wrap;gap:8px}
+.opt{position:relative}
+.opt input{position:absolute;opacity:0;pointer-events:none}
+.opt span{display:inline-block;padding:9px 16px;border:1.5px solid var(--line);border-radius:8px;cursor:pointer;background:#fff;user-select:none}
+.opt input:checked + span{border-color:var(--accent);background:var(--accent-soft);font-weight:bold}
+.opt input:focus-visible + span{outline:2px solid var(--accent);outline-offset:2px}
+select,input[type=text],input[type=tel],input[type=email],textarea{width:100%;padding:10px;border:1.5px solid var(--line);border-radius:8px;font:inherit;background:#fff;color:var(--ink)}
+textarea{min-height:80px;resize:vertical}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:560px){.row{grid-template-columns:1fr}}
+.sub{border-left:3px solid var(--accent);padding:10px 0 2px 14px;margin:10px 0 0;display:none}
+.sub.show{display:block}
+details.hint{background:var(--hint);border:1px solid var(--hint-line);border-radius:8px;padding:8px 12px;margin-top:8px;font-size:.92rem}
+details.hint summary{cursor:pointer;color:#245b8f;font-weight:bold}
+details.hint p{margin:8px 0 4px}
+.invalid .t{color:var(--err)}
+.invalid select,.invalid .opt span{border-color:var(--err)}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
+button{font:inherit;padding:12px 20px;border-radius:8px;border:none;cursor:pointer}
+.primary{background:var(--accent);color:#fff;font-weight:bold}
+.secondary{background:#fff;border:1.5px solid var(--line);color:var(--ink)}
+.msg{margin-top:12px;color:var(--err);font-weight:bold}
+footer{margin-top:28px;font-size:.9rem;color:var(--muted);border-top:1px solid var(--line);padding-top:14px}
+#summary{display:none}
+@media print{
+  body{background:#fff;font-size:11pt}
+  .wrap{padding:0;max-width:none}
+  form,.progress,.intro,.actions,.msg{display:none!important}
+  #summary{display:block}
+  #summary table{width:100%;border-collapse:collapse}
+  #summary td{border:1px solid #999;padding:5px 8px;vertical-align:top}
+  #summary td:first-child{width:45%;font-weight:bold;background:#f2f2f2}
+  #summary h2{font-size:12pt;margin:14px 0 6px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>Fragebogen zur Energieberatung</h1>
+  <p>Wohnanlage Erlenweg 7 und Erlenweg 9</p>
+</header>
+
+<div class="intro">
+  Für die Energieberatung benötige ich einige Angaben zu Ihrer Wohnung. Das Ausfüllen dauert etwa 5 Minuten.
+  Wenn Sie etwas nicht genau wissen, wählen Sie einfach „weiß nicht“ – auch das hilft mir weiter.
+  Bei den blauen Kästen <b>„Ausfüllhilfe“</b> finden Sie Erklärungen.<br><br>
+  Ihre Eingaben werden nur auf Ihrem Gerät gespeichert. Sie können jederzeit unterbrechen und später weitermachen.
+</div>
+
+<div class="progress"><div class="bar"><span id="pbar"></span></div><div class="ptext" id="ptext">0 von 0 Pflichtfragen beantwortet</div></div>
+
+<form id="f" novalidate>
+
+<!-- 1 Wohnung -->
+<section>
+  <h2><span class="n">1</span>Ihre Wohnung</h2>
+
+  <div class="q" data-req="haus">
+    <span class="t">In welchem Haus wohnen Sie? <span class="req">*</span></span>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="haus" value="Erlenweg 7"><span>Erlenweg 7</span></label>
+      <label class="opt"><input type="radio" name="haus" value="Erlenweg 9"><span>Erlenweg 9</span></label>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="q" data-req="etage">
+      <label class="t" for="etage">Etage <span class="req">*</span></label>
+      <select id="etage" name="etage">
+        <option value="">– bitte wählen –</option>
+        <option>Erdgeschoss</option>
+        <option>1. Obergeschoss</option>
+        <option>2. Obergeschoss</option>
+        <option>3. Obergeschoss</option>
+        <option>4. Obergeschoss</option>
+      </select>
+    </div>
+    <div class="q" data-req="wohnung">
+      <label class="t" for="wohnung">Wohnung <span class="req">*</span></label>
+      <select id="wohnung" name="wohnung">
+        <option value="">– bitte wählen –</option>
+        <option value="links">links (vom Hauseingang aus gesehen)</option>
+        <option value="rechts">rechts (vom Hauseingang aus gesehen)</option>
+      </select>
+    </div>
+  </div>
+  <div class="q" id="wtyp" style="display:none;background:var(--accent-soft);border-radius:8px;padding:10px 14px"></div>
+
+  <div class="row">
+    <div class="q">
+      <label class="t" for="wnr">Wohnungsnummer (falls bekannt)</label>
+      <select id="wnr" name="wnr">
+        <option value="">– bitte wählen –</option>
+        <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
+        <option>6</option><option>7</option><option>8</option><option>9</option><option>10</option>
+      </select>
+    </div>
+    <div class="q">
+      <label class="t" for="name">Name (freiwillig)</label>
+      <input type="text" id="name" name="name" autocomplete="name">
+    </div>
+  </div>
+  <details class="hint"><summary>Ausfüllhilfe</summary>
+    <p>Das <b>Erdgeschoss</b> ist die erste Wohnetage direkt über den Garagen und Kellerräumen. Pro Etage gibt es im Treppenhaus zwei Wohnungen.</p>
+    <p>„Links“ und „rechts“ gilt so, wie Sie <b>draußen vor dem Hauseingang am Erlenweg</b> stehen und auf das Haus schauen. Nach der Auswahl wird Ihnen angezeigt, welche Räume Ihre Wohnung laut Bauplan hat – so können Sie prüfen, ob die Auswahl stimmt. Die Wohnungsnummer finden Sie oft in Ihrem Mietvertrag, der Nebenkostenabrechnung oder an der Wohnungstür.</p>
+  </details>
+</section>
+
+<!-- 2 Fenster -->
+<section>
+  <h2><span class="n">2</span>Fenster</h2>
+
+  <div class="q" data-req="fenster">
+    <span class="t">Wurden die Fenster in Ihrer Wohnung erneuert? <span class="req">*</span></span>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="fenster" value="ja" data-show="sub-fenster"><span>Ja</span></label>
+      <label class="opt"><input type="radio" name="fenster" value="nein"><span>Nein</span></label>
+      <label class="opt"><input type="radio" name="fenster" value="weiß nicht"><span>Weiß nicht</span></label>
+    </div>
+
+    <div class="sub" id="sub-fenster">
+      <div class="q">
+        <span class="t">Welche Fenster wurden getauscht? (Mehrfachauswahl möglich)</span>
+        <div class="opts">
+          <label class="opt"><input type="checkbox" name="fenster_raeume" value="alle Fenster"><span>Alle Fenster</span></label>
+          <label class="opt"><input type="checkbox" name="fenster_raeume" value="Wohnzimmer"><span>Wohnzimmer</span></label>
+          <label class="opt"><input type="checkbox" name="fenster_raeume" value="Schlafzimmer"><span>Schlafzimmer</span></label>
+          <label class="opt"><input type="checkbox" name="fenster_raeume" value="Küche"><span>Küche</span></label>
+          <label class="opt"><input type="checkbox" name="fenster_raeume" value="Esszimmer"><span>Esszimmer</span></label>
+          <label class="opt"><input type="checkbox" name="fenster_raeume" value="Kinderzimmer"><span>Kinderzimmer</span></label>
+          <label class="opt"><input type="checkbox" name="fenster_raeume" value="Bad"><span>Bad</span></label>
+          <label class="opt"><input type="checkbox" name="fenster_raeume" value="WC"><span>WC</span></label>
+        </div>
+      </div>
+      <div class="q">
+        <label class="t" for="fenster_jahr">Wann wurden die Fenster getauscht? (Jahr, ungefähr reicht)</label>
+        <input type="text" id="fenster_jahr" name="fenster_jahr" inputmode="numeric" placeholder="z. B. 2012">
+      </div>
+      <div class="q">
+        <span class="t">Welche Verglasung haben die neuen Fenster?</span>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="verglasung" value="2-fach Verglasung"><span>2-fach Verglasung</span></label>
+          <label class="opt"><input type="radio" name="verglasung" value="3-fach Wärmeschutzverglasung"><span>3-fach Wärmeschutzverglasung</span></label>
+          <label class="opt"><input type="radio" name="verglasung" value="weiß nicht"><span>Weiß nicht</span></label>
+        </div>
+      </div>
+    </div>
+
+    <details class="hint"><summary>Ausfüllhilfe: Wie erkenne ich Baujahr und Verglasung?</summary>
+      <p><b>Baujahr:</b> Öffnen Sie das Fenster und schauen Sie auf den Metallstreifen zwischen den Glasscheiben (Abstandhalter) oder auf den Rahmen. Dort ist häufig das Herstelljahr eingeprägt, z. B. „03/2012“.</p>
+      <p><b>2-fach oder 3-fach:</b> Halten Sie bei Dunkelheit ein Feuerzeug oder eine Handy-Taschenlampe dicht vor die Scheibe. Sehen Sie <b>4 Spiegelbilder</b>, ist es eine 2-fach Verglasung, bei <b>6 Spiegelbildern</b> eine 3-fach Verglasung. 3-fach-Fenster sind zudem deutlich dicker und schwerer.</p>
+    </details>
+  </div>
+</section>
+
+<!-- 3 Heizkörpernischen -->
+<section>
+  <h2><span class="n">3</span>Heizkörpernischen</h2>
+
+  <div class="q" data-req="nische">
+    <span class="t">Sind in Ihrer Wohnung Heizkörpernischen vorhanden? <span class="req">*</span></span>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="nische" value="ja" data-show="sub-nische"><span>Ja</span></label>
+      <label class="opt"><input type="radio" name="nische" value="nein"><span>Nein</span></label>
+      <label class="opt"><input type="radio" name="nische" value="weiß nicht"><span>Weiß nicht</span></label>
+    </div>
+
+    <div class="sub" id="sub-nische">
+      <span class="t">In welchen Räumen? (Mehrfachauswahl möglich)</span>
+      <div class="opts">
+        <label class="opt"><input type="checkbox" name="nische_raeume" value="Wohnzimmer"><span>Wohnzimmer</span></label>
+        <label class="opt"><input type="checkbox" name="nische_raeume" value="Schlafzimmer"><span>Schlafzimmer</span></label>
+        <label class="opt"><input type="checkbox" name="nische_raeume" value="Küche"><span>Küche</span></label>
+        <label class="opt"><input type="checkbox" name="nische_raeume" value="Esszimmer"><span>Esszimmer</span></label>
+        <label class="opt"><input type="checkbox" name="nische_raeume" value="Kinderzimmer"><span>Kinderzimmer</span></label>
+        <label class="opt"><input type="checkbox" name="nische_raeume" value="Bad"><span>Bad</span></label>
+      </div>
+    </div>
+
+    <details class="hint"><summary>Ausfüllhilfe: Was ist eine Heizkörpernische?</summary>
+      <p>Eine Heizkörpernische ist eine Vertiefung in der Außenwand, meist unter dem Fenster, in der der Heizkörper sitzt. Die Wand ist dort dünner als daneben. Sie erkennen sie daran, dass der Heizkörper ein Stück „in der Wand“ steht und die Fensterbank weiter in den Raum ragt als üblich.</p>
+      <p>Für die Energieberatung ist das wichtig, weil an diesen Stellen mehr Wärme nach außen verloren geht.</p>
+    </details>
+  </div>
+</section>
+
+<!-- 4 Heizung -->
+<section>
+  <h2><span class="n">4</span>Heizung</h2>
+
+  <div class="q" data-req="abgleich">
+    <span class="t">Wurde ein hydraulischer Abgleich durchgeführt? <span class="req">*</span></span>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="abgleich" value="ja"><span>Ja</span></label>
+      <label class="opt"><input type="radio" name="abgleich" value="nein"><span>Nein</span></label>
+      <label class="opt"><input type="radio" name="abgleich" value="weiß nicht"><span>Weiß nicht</span></label>
+    </div>
+    <details class="hint" open><summary>Hinweis: Was ist ein hydraulischer Abgleich?</summary>
+      <p>Beim hydraulischen Abgleich stellt ein Fachbetrieb die Heizung so ein, dass jeder Heizkörper genau so viel warmes Wasser bekommt, wie er für seinen Raum braucht. Dafür werden u. a. die Ventile an den Heizkörpern voreingestellt.</p>
+      <p>Ohne Abgleich werden manche Räume zu warm und andere nicht richtig warm, Heizkörper „rauschen“ oder gluckern, und es wird unnötig Energie verbraucht. Wenn Sie es nicht wissen, wählen Sie einfach „weiß nicht“.</p>
+    </details>
+  </div>
+
+  <div class="q" data-req="hk_tausch">
+    <span class="t">Wurden in Ihrer Wohnung Heizkörper getauscht? <span class="req">*</span></span>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="hk_tausch" value="ja" data-show="sub-hk"><span>Ja</span></label>
+      <label class="opt"><input type="radio" name="hk_tausch" value="nein"><span>Nein</span></label>
+      <label class="opt"><input type="radio" name="hk_tausch" value="weiß nicht"><span>Weiß nicht</span></label>
+    </div>
+    <div class="sub" id="sub-hk">
+      <div class="q">
+        <label class="t" for="hk_info">Wann und in welchen Räumen? (freiwillig)</label>
+        <input type="text" id="hk_info" name="hk_info" placeholder="z. B. 2018, Bad und Küche">
+      </div>
+    </div>
+  </div>
+
+  <div class="q" data-req="warm">
+    <span class="t">Werden alle Räume ausreichend warm? <span class="req">*</span></span>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="warm" value="ja"><span>Ja</span></label>
+      <label class="opt"><input type="radio" name="warm" value="nein" data-show="sub-warm"><span>Nein</span></label>
+    </div>
+    <div class="sub" id="sub-warm">
+      <span class="t">Welche Räume werden nicht ausreichend warm? (freiwillig)</span>
+      <div class="opts">
+        <label class="opt"><input type="checkbox" name="kalt_raeume" value="Wohnzimmer"><span>Wohnzimmer</span></label>
+        <label class="opt"><input type="checkbox" name="kalt_raeume" value="Schlafzimmer"><span>Schlafzimmer</span></label>
+        <label class="opt"><input type="checkbox" name="kalt_raeume" value="Küche"><span>Küche</span></label>
+        <label class="opt"><input type="checkbox" name="kalt_raeume" value="Esszimmer"><span>Esszimmer</span></label>
+        <label class="opt"><input type="checkbox" name="kalt_raeume" value="Kinderzimmer"><span>Kinderzimmer</span></label>
+        <label class="opt"><input type="checkbox" name="kalt_raeume" value="Bad"><span>Bad</span></label>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 5 Haustür -->
+<section>
+  <h2><span class="n">5</span>Haustür</h2>
+  <div class="q" data-req="tuer">
+    <span class="t">Wurde die Haustür erneuert? <span class="req">*</span></span>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="tuer" value="ja" data-show="sub-tuer"><span>Ja</span></label>
+      <label class="opt"><input type="radio" name="tuer" value="nein"><span>Nein</span></label>
+      <label class="opt"><input type="radio" name="tuer" value="weiß nicht"><span>Weiß nicht</span></label>
+    </div>
+    <div class="sub" id="sub-tuer">
+      <div class="q">
+        <label class="t" for="tuer_jahr">Wann wurde die Haustür erneuert? (Jahr, ungefähr reicht)</label>
+        <input type="text" id="tuer_jahr" name="tuer_jahr" inputmode="numeric" placeholder="z. B. 2015">
+      </div>
+    </div>
+    <details class="hint"><summary>Ausfüllhilfe</summary>
+      <p>Gemeint ist die Eingangstür des Hauses (Treppenhaus). Das Einbaujahr steht manchmal auf einem kleinen Typenschild an der Bandseite (Scharniere) im Türfalz.</p>
+    </details>
+  </div>
+</section>
+
+<!-- 6 Bemerkungen -->
+<section>
+  <h2><span class="n">6</span>Sonstiges</h2>
+  <div class="q">
+    <label class="t" for="bemerkung">Möchten Sie noch etwas mitteilen? (z. B. Zugluft, Feuchtigkeit/Schimmel, Geräusche der Heizung)</label>
+    <textarea id="bemerkung" name="bemerkung"></textarea>
+  </div>
+</section>
+
+<input type="checkbox" name="botcheck" style="display:none" tabindex="-1" autocomplete="off">
+
+<div class="q" data-req="dsgvo" style="margin-top:16px">
+  <label class="opt" style="display:flex;gap:10px;align-items:flex-start;cursor:pointer">
+    <input type="checkbox" name="dsgvo" value="ja" style="position:static;opacity:1;pointer-events:auto;width:20px;height:20px;flex:none;margin-top:2px">
+    <span style="border:none;padding:0;background:none;font-weight:normal" class="t">Ich bin einverstanden, dass meine Angaben zum Zweck der Energieberatung an Mößner Gebäudeenergieberatung übermittelt werden. Die Übermittlung erfolgt über den E-Mail-Dienst Web3Forms. <span class="req">*</span></span>
+  </label>
+</div>
+
+<div class="actions">
+  <button type="button" class="primary" id="btnSend">Fertig – Fragebogen absenden</button>
+  <button type="button" class="secondary" id="btnPdf">Zusätzlich als PDF speichern</button>
+  <button type="button" class="secondary" id="btnReset">Eingaben löschen</button>
+</div>
+<div class="msg" id="msg"></div>
+<div id="ok" style="display:none;margin-top:14px;background:var(--accent-soft);border-left:4px solid var(--accent);padding:12px 16px;border-radius:6px"><b>Vielen Dank!</b> Ihr Fragebogen wurde erfolgreich übermittelt. Sie können dieses Fenster jetzt schließen.</div>
+</form>
+
+<div id="summary"></div>
+
+<footer>
+  Mit „Fragebogen absenden“ werden Ihre Angaben direkt an mich übermittelt. Bei Fragen erreichen Sie mich gern telefonisch.<br><br>
+  <b>Mößner Gebäudeenergieberatung</b> · Dominik Mößner, Gebäudeenergieberater (HWK)<br>
+  Sandfeld 8 · 24873 Havetoft · Mobil: 0152/36192988
+</footer>
+</div>
+
+<script>
+(function(){
+  var KEY='fragebogen-erlenweg-v1';
+  var f=document.getElementById('f');
+
+  function store(){
+    var d={};
+    Array.prototype.forEach.call(f.elements,function(el){
+      if(!el.name) return;
+      if(el.type==='radio'){ if(el.checked) d[el.name]=el.value; }
+      else if(el.type==='checkbox'){ d[el.name]=d[el.name]||[]; if(el.checked) d[el.name].push(el.value); }
+      else d[el.name]=el.value;
+    });
+    return d;
+  }
+  function save(){ try{ localStorage.setItem(KEY,JSON.stringify(store())); }catch(e){} }
+  function load(){
+    var d; try{ d=JSON.parse(localStorage.getItem(KEY)||'null'); }catch(e){ d=null; }
+    if(!d) return;
+    Array.prototype.forEach.call(f.elements,function(el){
+      if(!el.name || !(el.name in d)) return;
+      var v=d[el.name];
+      if(el.type==='radio') el.checked=(v===el.value);
+      else if(el.type==='checkbox') el.checked=Array.isArray(v)&&v.indexOf(el.value)>-1;
+      else el.value=v;
+    });
+  }
+
+  function toggles(){
+    document.querySelectorAll('.sub').forEach(function(s){
+      var trig=f.querySelector('input[data-show="'+s.id+'"]');
+      s.classList.toggle('show', !!(trig && trig.checked));
+    });
+  }
+
+  var TYPEN={
+    'Erlenweg 7|links': {typ:'Typ 1/5', fl:'ca. 92 m²', r:'Wohnzimmer, Esszimmer, zweiter Wohnraum, Schlafzimmer, Küche, Bad, separates WC'},
+    'Erlenweg 7|rechts':{typ:'Typ 2/6', fl:'ca. 114 m²', r:'großes Wohnzimmer, Esszimmer, Schlafzimmer, 2 Kinderzimmer, Küche, Bad, separates WC'},
+    'Erlenweg 9|links': {typ:'Typ 3/7', fl:'ca. 76 m²', r:'Wohnzimmer, Esszimmer, Schlafzimmer, Küche, Bad, separates WC'},
+    'Erlenweg 9|rechts':{typ:'Typ 4/8', fl:'ca. 92 m²', r:'Wohnzimmer, Esszimmer, zweiter Wohnraum, Schlafzimmer, Küche, Bad, separates WC'}
+  };
+  function typInfo(){ var d=store(); return TYPEN[(d.haus||'')+'|'+(d.wohnung||'')]||null; }
+  function showTyp(){
+    var t=typInfo(), box=document.getElementById('wtyp');
+    if(!t){ box.style.display='none'; return; }
+    box.style.display='block';
+    box.innerHTML='<b>Ihre Wohnung laut Bauplan:</b> '+t.fl+' – '+t.r+'.<br><span style="font-size:.9rem;color:var(--muted)">Passt das nicht zu Ihrer Wohnung, haben Sie vermutlich die andere Seite gewählt. Bitte prüfen Sie „links/rechts“.</span>';
+  }
+
+  var reqs=[].slice.call(document.querySelectorAll('[data-req]'));
+  function answered(name){
+    var els=f.elements[name];
+    if(!els) return false;
+    if(els.tagName==='SELECT') return !!els.value;
+    if(els.length!==undefined){ for(var i=0;i<els.length;i++) if(els[i].checked) return true; return false; }
+    return !!els.value;
+  }
+  function progress(){
+    var n=reqs.filter(function(q){return answered(q.dataset.req);}).length;
+    document.getElementById('pbar').style.width=(100*n/reqs.length)+'%';
+    document.getElementById('ptext').textContent=n+' von '+reqs.length+' Pflichtfragen beantwortet';
+    reqs.forEach(function(q){ if(answered(q.dataset.req)) q.classList.remove('invalid'); });
+  }
+
+  function val(d,k){ var v=d[k]; if(Array.isArray(v)) v=v.join(', '); return v||'–'; }
+  function esc(s){ return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+  function buildSummary(){
+    var d=store(), rows=[], txt=[];
+    function sec(t){ rows.push('</table><h2>'+t+'</h2><table>'); txt.push('','=== '+t.toUpperCase()+' ==='); }
+    function r(l,v){ rows.push('<tr><td>'+esc(l)+'</td><td>'+esc(v)+'</td></tr>'); txt.push(l+': '+v); }
+    sec('Wohnung');
+    r('Haus',val(d,'haus')); r('Etage',val(d,'etage')); r('Wohnung',val(d,'wohnung'));
+    var t=typInfo(); if(t) r('Wohnungstyp lt. Bauplan 1959',t.typ+', '+t.fl);
+    r('Wohnungsnummer',val(d,'wnr')); r('Name',val(d,'name'));
+    sec('Fenster');
+    r('Fenster erneuert',val(d,'fenster'));
+    if(d.fenster==='ja'){ r('Getauschte Fenster',val(d,'fenster_raeume')); r('Jahr Fenstertausch',val(d,'fenster_jahr')); r('Verglasung',val(d,'verglasung')); }
+    sec('Heizkörpernischen');
+    r('Heizkörpernischen vorhanden',val(d,'nische'));
+    if(d.nische==='ja') r('Räume mit Nische',val(d,'nische_raeume'));
+    sec('Heizung');
+    r('Hydraulischer Abgleich durchgeführt',val(d,'abgleich'));
+    r('Heizkörper getauscht',val(d,'hk_tausch'));
+    if(d.hk_tausch==='ja') r('Wann / welche Räume',val(d,'hk_info'));
+    r('Räume ausreichend warm',val(d,'warm'));
+    if(d.warm==='nein') r('Nicht ausreichend warm',val(d,'kalt_raeume'));
+    sec('Haustür');
+    r('Haustür erneuert',val(d,'tuer'));
+    if(d.tuer==='ja') r('Jahr Haustür',val(d,'tuer_jahr'));
+    sec('Sonstiges');
+    r('Bemerkungen',val(d,'bemerkung'));
+    var head='<h1 style="font-size:15pt;margin:0 0 4px">Fragebogen Energieberatung – '+esc(val(d,'haus'))+'</h1>'+
+      '<p style="margin:0 0 8px">Ausgefüllt am '+new Date().toLocaleDateString('de-DE')+'</p>';
+    document.getElementById('summary').innerHTML=head+('<table>'+rows.join('')+'</table>').replace('<table></table>','');
+    return {d:d, text:txt.join('\n').trim(), typ:typInfo()};
+  }
+
+  // >>> Hier den Access Key von Web3Forms eintragen <<<
+  var ACCESS_KEY='59dcc1c3-eab6-4440-860c-79c4e4153b6c';
+
+  function checkReq(skipDsgvo){
+    var missing=reqs.filter(function(q){ return !(skipDsgvo && q.dataset.req==='dsgvo') && !answered(q.dataset.req); });
+    var msg=document.getElementById('msg');
+    if(missing.length){
+      missing.forEach(function(q){q.classList.add('invalid');});
+      msg.textContent='Bitte beantworten Sie noch die rot markierten Pflichtfragen.';
+      missing[0].scrollIntoView({behavior:'smooth',block:'center'});
+      return false;
+    }
+    msg.textContent=''; return true;
+  }
+
+  document.getElementById('btnSend').addEventListener('click',function(){
+    if(!checkReq(false)) return;
+    var s=buildSummary(), btn=this, msg=document.getElementById('msg');
+    if(f.elements.botcheck.checked) return;
+    var wohn=(s.d.haus||'')+', '+(s.d.etage||'')+', '+(s.d.wohnung||'');
+    btn.disabled=true; btn.textContent='Wird gesendet …';
+    fetch('https://api.web3forms.com/submit',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Accept':'application/json'},
+      body:JSON.stringify({
+        access_key:ACCESS_KEY,
+        subject:'Fragebogen Erlenweg – '+wohn,
+        from_name:'Fragebogen Erlenweg',
+        Wohnung:wohn+(s.typ?' ('+s.typ.typ+')':''),
+        Antworten:s.text
+      })
+    }).then(function(r){return r.json();}).then(function(j){
+      if(j.success){
+        document.getElementById('ok').style.display='block';
+        btn.textContent='Gesendet ✓';
+        document.getElementById('ok').scrollIntoView({behavior:'smooth',block:'center'});
+      }else{ throw new Error(j.message||'Fehler'); }
+    }).catch(function(){
+      btn.disabled=false; btn.textContent='Fertig – Fragebogen absenden';
+      msg.textContent='Das Absenden hat leider nicht geklappt. Bitte speichern Sie den Fragebogen als PDF und senden Sie ihn per E-Mail an mich.';
+    });
+  });
+
+  f.addEventListener('input',function(){ toggles(); progress(); showTyp(); save(); });
+  f.addEventListener('change',function(){ toggles(); progress(); showTyp(); save(); });
+
+  document.getElementById('btnPdf').addEventListener('click',function(){
+    if(!checkReq(true)) return;
+    buildSummary();
+    window.print();
+  });
+  document.getElementById('btnReset').addEventListener('click',function(){
+    if(!confirm('Alle Eingaben wirklich löschen?')) return;
+    f.reset(); try{ localStorage.removeItem(KEY); }catch(e){}
+    toggles(); progress(); showTyp();
+  });
+
+  load(); toggles(); progress(); showTyp();
+})();
+</script>
+</body>
+</html>
